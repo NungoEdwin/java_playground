@@ -30,14 +30,14 @@ public class ProductController {
         return service.getProduct(id);
     }
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id,Product updatedproduct) {
+    public Product updateProduct(@PathVariable Long id,@RequestBody Product updatedproduct) {
         return service.update(updatedproduct,id);
     }
     @PostMapping
     public void postMethodName(@RequestBody Product entity) {
 
         
-     service.save(entity);;
+     service.save(entity);
     }
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id){
