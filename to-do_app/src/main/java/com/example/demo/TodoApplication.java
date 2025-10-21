@@ -16,8 +16,9 @@ public class TodoApplication {
 	private AtomicLong counter = new AtomicLong();
 
 	@GetMapping("/hello")
-	public String getMethodName(@RequestParam(defaultValue="world", value="name") String param) {
-		return String.format("Hello %s", param);
+	public Hello getMethodName(@RequestParam(defaultValue="world", value="name") String param) {
+		//return String.format("Hello %s", param);
+		return new Hello(String.format(template,param));
 	}
 	
 	@GetMapping("/greeting")
@@ -26,6 +27,7 @@ public class TodoApplication {
 	}
 	//record is a DTO(POJO) like data struct for immutable data 
 	public record Greeting(long is,String content){}
+	public record Hello(String content){}
 	
 	
 	public static void main(String[] args) {
