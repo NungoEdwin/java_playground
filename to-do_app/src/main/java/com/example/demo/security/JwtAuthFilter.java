@@ -30,6 +30,8 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             throws ServletException, IOException {
            //  Skip authentication for public endpoints
         String path = request.getServletPath();
+        System.out.println("JWT filter path = " + request.getServletPath());
+
     if (path.startsWith("/auth")) {
         filterChain.doFilter(request, response);
         return;

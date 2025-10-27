@@ -18,7 +18,7 @@ import com.example.demo.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/api")
 @RequiredArgsConstructor
 public class AuthController {
     private final UserRepository userRepository;
