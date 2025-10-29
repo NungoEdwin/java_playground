@@ -10,7 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "mysecretkey123456789"; // use env var in real apps
+    private static final String SECRET_KEY = "mysecretkey123456789ABCDEFGHIJKLERT"; // use env var in real apps
     private static final long EXPIRATION_TIME = 86400000; // 1 day
 
     public String generateToken(UserDetails userDetails) {
