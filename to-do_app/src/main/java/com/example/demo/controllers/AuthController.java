@@ -1,11 +1,12 @@
 package com.example.demo.controllers;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,13 +36,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request) {
+       try{
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(request.get("username"), request.get("password"));
-        authenticationManager.authenticate(authInputToken);
-        String token = jwtUtil.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        request.get("username"), "", List.of()));
-                        System.out.println(token);
+       Authentication auth= authenticationManager.authenticate(authInputToken);
+       UserDetails userDetails=(UserDetails) auth.getPrincipal();
+       String token = jwtUtil.generateToken(userDetails);
+            System.out.println(token);
         return ResponseEntity.ok(Map.of("token", token));
+       }catch(Exception e){
+        e.printStackTrace();
+        return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+       }
     }
 }

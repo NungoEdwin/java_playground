@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -15,7 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
+
 public class JwtAuthFilter extends OncePerRequestFilter{
     @Autowired
     private JwtUtil jwtUtil;
@@ -35,7 +34,13 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     if (path.startsWith("/auth")) {
         filterChain.doFilter(request, response);
         return;
-    }     
+    }  
+    //skipping h2 path
+    if (request.getRequestURI().startsWith("/h2-console")) {
+    filterChain.doFilter(request, response);
+    return;
+}
+   
 
         final String authHeader = request.getHeader("Authorization");
         String username = null, jwt = null;

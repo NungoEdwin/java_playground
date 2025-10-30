@@ -3,6 +3,7 @@ package com.example.demo.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,8 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private  JwtAuthFilter jwtAuthFilter;
+    // @Autowired
+    // private  JwtAuthFilter jwtAuthFilter;
 
     @Autowired
     private  CustomUserDetailsService userDetailsService;
@@ -27,19 +28,35 @@ public class SecurityConfig {
     //     this.jwtAuthFilter = jwtAuthFilter;
     //     this.userDetailsService = userDetailsService;
     // }
+     @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter(); // or pass dependencies in constructor if needed
+    }
+    @Bean
+@Order(1) // higher priority
+public SecurityFilterChain h2ConsoleSecurity(HttpSecurity http) throws Exception {
+    http
+        .securityMatcher("/h2-console/**")   // only for H2 paths
+        .csrf(AbstractHttpConfigurer::disable)
+        .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
+        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+    return http.build();
+}
 
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
+                    .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/*").permitAll()
                         .anyRequest().authenticated()
-                        )
+                    )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(userDetailsService)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
